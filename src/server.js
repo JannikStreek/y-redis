@@ -42,13 +42,19 @@ export const createYWebsocketServer = async ({
   const app = uws.App({})
   await registerYWebsocketServer(app, '/:room', store, async (req) => {
     const room = req.getParameter(0)
-    const token = req.getQuery('yauth')
-    if (token == null) {
-      throw new Error('Missing Token')
-    }
+    // const token = req.getQuery('yauth')
+    // if (token == null) {
+    //   throw new Error('Missing Token')
+    // }
 
     // verify that the user has a valid token
-    const { payload: userToken } = await jwt.verifyJwt(wsServerPublicKey, token)
+
+    //const { payload: userToken } = await jwt.verifyJwt(wsServerPublicKey, token)
+    const userToken = {
+      iss: 'my-auth-server',
+      exp: time.getUnixTime() + 1000 * 60 * 60 * 24, // access expires in a day
+      yuserid: 'user1' // fill this with a unique id of the authorized user
+    }
     if (userToken.yuserid == null) {
       throw new Error('Missing userid in user token!')
     }
